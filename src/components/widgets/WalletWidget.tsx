@@ -1,10 +1,11 @@
 import { GlassCard } from "@/components/shared/GlassCard";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Plus, TrendingUp, Wallet } from "lucide-react";
+import { Plus, TrendingUp, Wallet } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
+import { SendMoneyDialog } from "./SendMoneyDialog";
 
 export const WalletWidget = ({ userId, balance, loading }: { userId?: string; balance?: number; loading?: boolean }) => {
   const qc = useQueryClient();
@@ -46,9 +47,7 @@ export const WalletWidget = ({ userId, balance, loading }: { userId?: string; ba
           >
             <Plus className="mr-1 h-4 w-4" /> Top up
           </Button>
-          <Button variant="outline" className="bg-secondary/40">
-            <ArrowUpRight className="mr-1 h-4 w-4" /> Send
-          </Button>
+          {userId && <SendMoneyDialog userId={userId} balance={balance ?? 0} />}
         </div>
       </div>
     </GlassCard>

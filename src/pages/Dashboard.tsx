@@ -7,7 +7,8 @@ import { RecentActivity } from "@/components/widgets/RecentActivity";
 import { QuickActions } from "@/components/widgets/QuickActions";
 import { HealthCheck } from "@/components/widgets/HealthCheck";
 import { useAuth } from "@/hooks/useAuth";
-import { profileService } from "@/services/profile.service";
+import { api } from "@/services/api";
+import { Crown } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ export default function Dashboard() {
     queryKey: ["profile", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data, error } = await profileService.getProfile(user!.id);
+      const { data, error } = await api.profiles.getProfile(user!.id);
       if (error) throw error;
       return data;
     },
@@ -30,10 +31,17 @@ export default function Dashboard() {
           <TopBar name={profile?.full_name ?? undefined} avatarUrl={profile?.avatar_url ?? undefined} />
           <main className="flex-1 p-4 md:p-8">
             <div className="mb-8 animate-fade-up">
-              <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-                Hello, <span className="text-gradient">{profile?.full_name ?? user?.email?.split("@")[0] ?? "there"}</span>
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">Here's what's happening across your services.</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
+                  Welcome back, <span className="text-gradient">{profile?.full_name ?? user?.email?.split("@")[0] ?? "there"}</span>
+                </h1>
+                {profile?.tier && profile.tier !== "free" && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-primary-glow">
+                    <Crown className="h-3 w-3" /> {profile.tier}
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Your unified command center — wallet, travel, studio, marketplace.</p>
             </div>
 
             <div className="grid gap-5 lg:grid-cols-3">
