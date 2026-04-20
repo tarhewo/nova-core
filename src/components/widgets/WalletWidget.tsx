@@ -47,7 +47,7 @@ export const WalletWidget = ({ userId, balance, loading }: { userId?: string; ba
           >
             <Plus className="mr-1 h-4 w-4" /> Top up
           </Button>
-          {userId && <SendMoneyDialog userId={userId} balance={balance ?? 0} />}
+          {userId && <SendMoneyDialog balance={balance ?? 0} />}
         </div>
       </div>
     </GlassCard>
