@@ -11,6 +11,13 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Wallet, Plane, PlaySquare, ShoppingBag,
 };
 
+const ROUTE: Record<string, string> = {
+  fintech: "/fintech",
+  travel: "/travel",
+  media: "/media",
+  shop: "/marketplace",
+};
+
 const ACCENT: Record<string, string> = {
   fintech: "from-violet-500/30 to-fuchsia-500/10",
   travel: "from-sky-500/30 to-cyan-500/10",
@@ -74,7 +81,7 @@ export const ServiceGrid = () => {
             {isComingSoon ? (
               <div className="cursor-not-allowed opacity-95">{Card}</div>
             ) : (
-              <Link to={`/services/${s.category}`} className="block h-full">{Card}</Link>
+              <Link to={ROUTE[s.category] ?? "/dashboard"} className="block h-full">{Card}</Link>
             )}
           </motion.div>
         );

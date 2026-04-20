@@ -28,14 +28,10 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route
-        path="/services/:category"
-        element={
-          <ProtectedRoute>
-            <ServiceHub />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/fintech"     element={<ProtectedRoute><ServiceHub category="fintech" /></ProtectedRoute>} />
+      <Route path="/travel"      element={<ProtectedRoute><ServiceHub category="travel" /></ProtectedRoute>} />
+      <Route path="/media"       element={<ProtectedRoute><ServiceHub category="media" /></ProtectedRoute>} />
+      <Route path="/marketplace" element={<ProtectedRoute><ServiceHub category="shop" /></ProtectedRoute>} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

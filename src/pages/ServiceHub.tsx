@@ -1,4 +1,4 @@
-import { useParams, Navigate, Link } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Construction } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,8 @@ const HUBS: Record<string, { title: string; tagline: string }> = {
   shop: { title: "Marketplace", tagline: "Hire pros and shop products with confidence." },
 };
 
-export default function ServiceHub() {
-  const { category } = useParams<{ category: string }>();
-  if (!category || !HUBS[category]) return <Navigate to="/dashboard" replace />;
+export default function ServiceHub({ category }: { category: string }) {
+  if (!HUBS[category]) return <Navigate to="/dashboard" replace />;
   const hub = HUBS[category];
   return (
     <SidebarProvider>

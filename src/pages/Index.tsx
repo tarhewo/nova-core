@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Search, Sparkles, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,12 @@ import { ServiceGrid } from "@/components/widgets/ServiceGrid";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { TrustBar } from "@/components/widgets/TrustBar";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
+  const { session, loading } = useAuth();
   const [q, setQ] = useState("");
+  if (!loading && session) return <Navigate to="/dashboard" replace />;
   return (
     <div className="min-h-screen">
       <SiteHeader />
