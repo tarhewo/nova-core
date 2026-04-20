@@ -25,7 +25,7 @@ const ACCENT: Record<string, string> = {
   shop: "from-emerald-500/25 to-teal-500/10",
 };
 
-export const ServiceGrid = () => {
+export const ServiceGrid = ({ filter = "" }: { filter?: string }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["services"],
     queryFn: async () => {
@@ -43,9 +43,24 @@ export const ServiceGrid = () => {
     );
   }
 
+  const q = filter.trim().toLowerCase();
+  const filtered = q
+    ? (data ?? []).filter((s) =>
+        [s.name, s.description ?? "", s.category].some((v) => v.toLowerCase().includes(q)),
+      )
+    : data ?? [];
+
+  if (q && filtered.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border/60 p-10 text-center text-sm text-muted-foreground">
+        No services match "<span className="text-foreground">{filter}</span>" — try wallet, flight, course, or shop.
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {data?.map((s, i) => {
+      {filtered.map((s, i) => {
         const Icon = ICONS[s.icon ?? ""] ?? Wallet;
         const isComingSoon = s.status === "coming_soon";
         const Card = (

@@ -183,7 +183,7 @@ export type Database = {
       }
     }
     Enums: {
-      account_tier: "free" | "premium" | "enterprise"
+      account_tier: "standard" | "premium" | "enterprise"
       activity_type: "login" | "purchase" | "booking" | "topup" | "other"
       app_role: "user" | "vendor" | "admin"
       service_category: "fintech" | "travel" | "media" | "shop"
@@ -317,7 +317,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      account_tier: ["free", "premium", "enterprise"],
+      account_tier: ["standard", "premium", "enterprise"],
       activity_type: ["login", "purchase", "booking", "topup", "other"],
       app_role: ["user", "vendor", "admin"],
       service_category: ["fintech", "travel", "media", "shop"],

@@ -73,7 +73,7 @@ const Index = () => {
               <Link to="/dashboard">Open dashboard →</Link>
             </Button>
           </div>
-          <ServiceGrid />
+          <ServiceGrid filter={q} />
         </section>
 
         {/* CTA */}

@@ -19,9 +19,9 @@ export const SendMoneyDialog = ({ userId, balance }: Props) => {
   const send = useMutation({
     mutationFn: async () => {
       const cents = Math.round(parseFloat(amount) * 100);
-      if (!cents || cents <= 0) throw new Error("Enter a valid amount");
-      if (cents > balance) throw new Error("Insufficient funds");
       if (!recipient.trim()) throw new Error("Recipient is required");
+      if (!cents || cents <= 0) throw new Error("Enter a valid amount");
+      if (cents > balance) throw new Error("Low balance — top up to send this amount");
 
       const { error: updErr } = await api.client
         .from("profiles")
