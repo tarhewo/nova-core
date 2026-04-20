@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_allowlist: {
+        Row: {
+          bonus_cents: number
+          created_at: string
+          email: string
+          note: string | null
+          tier: Database["public"]["Enums"]["account_tier"]
+        }
+        Insert: {
+          bonus_cents?: number
+          created_at?: string
+          email: string
+          note?: string | null
+          tier?: Database["public"]["Enums"]["account_tier"]
+        }
+        Update: {
+          bonus_cents?: number
+          created_at?: string
+          email?: string
+          note?: string | null
+          tier?: Database["public"]["Enums"]["account_tier"]
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -181,6 +205,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      wallet_send: {
+        Args: { p_amount: number; p_recipient: string }
+        Returns: number
+      }
+      wallet_topup: { Args: { p_amount: number }; Returns: number }
     }
     Enums: {
       account_tier: "standard" | "premium" | "enterprise"
