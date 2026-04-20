@@ -16,11 +16,11 @@ export const profileService = {
       .update({ wallet_balance: newBalance })
       .eq("id", userId);
     if (error) throw error;
-    await supabase.from("user_activity").insert({
+    await supabase.from("user_activity").insert([{
       user_id: userId,
-      action_type: "topup",
-      metadata: { amount },
-    });
+      action_type: "topup" as const,
+      metadata: { amount } as never,
+    }]);
     return newBalance;
   },
 };

@@ -10,5 +10,5 @@ export const activityService = {
       .limit(limit),
 
   log: (userId: string, action_type: "login" | "purchase" | "booking" | "topup" | "other", metadata: Record<string, unknown> = {}) =>
-    supabase.from("user_activity").insert({ user_id: userId, action_type, metadata }),
+    supabase.from("user_activity").insert([{ user_id: userId, action_type, metadata: metadata as never }]),
 };
