@@ -77,6 +77,50 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json
+          service_id: string | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          service_id?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type?: Database["public"]["Enums"]["transaction_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_activity: {
         Row: {
           action_type: Database["public"]["Enums"]["activity_type"]
@@ -140,6 +184,8 @@ export type Database = {
       app_role: "user" | "vendor" | "admin"
       service_category: "fintech" | "travel" | "media" | "shop"
       service_status: "active" | "coming_soon"
+      transaction_status: "pending" | "completed" | "failed" | "refunded"
+      transaction_type: "payment" | "booking" | "purchase" | "topup" | "refund"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -271,6 +317,8 @@ export const Constants = {
       app_role: ["user", "vendor", "admin"],
       service_category: ["fintech", "travel", "media", "shop"],
       service_status: ["active", "coming_soon"],
+      transaction_status: ["pending", "completed", "failed", "refunded"],
+      transaction_type: ["payment", "booking", "purchase", "topup", "refund"],
     },
   },
 } as const
