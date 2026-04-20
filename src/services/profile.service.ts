@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { transactionsService } from "./transactions.service";
 
 export const profileService = {
   getProfile: (userId: string) =>
@@ -16,6 +17,13 @@ export const profileService = {
       .update({ wallet_balance: newBalance })
       .eq("id", userId);
     if (error) throw error;
+    await transactionsService.create({
+      user_id: userId,
+      type: "topup",
+      amount,
+      status: "completed",
+      description: "Wallet top-up",
+    });
     await supabase.from("user_activity").insert([{
       user_id: userId,
       action_type: "topup" as const,

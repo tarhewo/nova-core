@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
+import ServiceHub from "./pages/ServiceHub.tsx";
 import { useAuthBootstrap } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute";
 
@@ -18,11 +19,20 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/auth" element={<Auth />} />
+      <Route path="/login" element={<Auth />} />
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/services/:category"
+        element={
+          <ProtectedRoute>
+            <ServiceHub />
           </ProtectedRoute>
         }
       />
