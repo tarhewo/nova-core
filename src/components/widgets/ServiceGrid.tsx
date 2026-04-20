@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { servicesService } from "@/services/services.service";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { api } from "@/services/api";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { Wallet, Plane, PlaySquare, ShoppingBag, ArrowUpRight, Clock } from "lucide-react";
@@ -20,7 +22,7 @@ export const ServiceGrid = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["services"],
     queryFn: async () => {
-      const { data, error } = await servicesService.list();
+      const { data, error } = await api.services.list();
       if (error) throw error;
       return data;
     },
@@ -39,12 +41,10 @@ export const ServiceGrid = () => {
       {data?.map((s, i) => {
         const Icon = ICONS[s.icon ?? ""] ?? Wallet;
         const isComingSoon = s.status === "coming_soon";
-        return (
+        const Card = (
           <GlassCard
-            key={s.id}
             variant="strong"
-            className="group relative overflow-hidden p-5 transition-all duration-500 hover:-translate-y-1 hover:glow-primary cursor-pointer animate-fade-up"
-            style={{ animationDelay: `${i * 80}ms` }}
+            className="group relative h-full overflow-hidden p-5 transition-all duration-500 hover:-translate-y-1 hover:glow-primary"
           >
             <div className={`pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full bg-gradient-to-br ${ACCENT[s.category]} blur-2xl opacity-70 transition-opacity group-hover:opacity-100`} />
             <div className="relative flex h-full flex-col">
@@ -62,6 +62,21 @@ export const ServiceGrid = () => {
               <p className="mt-1 text-sm text-muted-foreground">{s.description}</p>
             </div>
           </GlassCard>
+        );
+        return (
+          <motion.div
+            key={s.id}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {isComingSoon ? (
+              <div className="cursor-not-allowed opacity-95">{Card}</div>
+            ) : (
+              <Link to={`/services/${s.category}`} className="block h-full">{Card}</Link>
+            )}
+          </motion.div>
         );
       })}
     </div>

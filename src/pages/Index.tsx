@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { ServiceGrid } from "@/components/widgets/ServiceGrid";
 import { GlassCard } from "@/components/shared/GlassCard";
+import { TrustBar } from "@/components/widgets/TrustBar";
+import { motion } from "framer-motion";
 
 const Index = () => {
   const [q, setQ] = useState("");
@@ -15,7 +17,12 @@ const Index = () => {
       <main>
         {/* HERO */}
         <section className="container relative pt-16 pb-20 md:pt-24 md:pb-28">
-          <div className="mx-auto max-w-3xl text-center animate-fade-up">
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto max-w-3xl text-center"
+          >
             <span className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-secondary/50 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 text-primary" /> One account · Every service
             </span>
@@ -47,8 +54,10 @@ const Index = () => {
               <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-4 w-4 text-success" /> Bank-grade security</span>
               <span className="inline-flex items-center gap-1.5"><Zap className="h-4 w-4 text-accent" /> Real-time everywhere</span>
             </div>
-          </div>
+          </motion.div>
         </section>
+
+        <TrustBar />
 
         {/* SERVICE NAVIGATOR */}
         <section className="container pb-20">

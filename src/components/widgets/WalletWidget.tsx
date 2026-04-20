@@ -2,18 +2,18 @@ import { GlassCard } from "@/components/shared/GlassCard";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Plus, TrendingUp, Wallet } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { profileService } from "@/services/profile.service";
+import { api } from "@/services/api";
 import { toast } from "sonner";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 
 export const WalletWidget = ({ userId, balance, loading }: { userId?: string; balance?: number; loading?: boolean }) => {
   const qc = useQueryClient();
   const topup = useMutation({
-    mutationFn: () => profileService.topUp(userId!, 5000),
+    mutationFn: () => api.profiles.topUp(userId!, 5000),
     onSuccess: () => {
       toast.success("$50.00 added to wallet");
       qc.invalidateQueries({ queryKey: ["profile"] });
-      qc.invalidateQueries({ queryKey: ["activity"] });
+      qc.invalidateQueries({ queryKey: ["transactions"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });

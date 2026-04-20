@@ -1,11 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { activityService } from "@/services/activity.service";
+import { motion } from "framer-motion";
+import { api } from "@/services/api";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
-import { LogIn, ShoppingBag, Plane, Plus, Activity } from "lucide-react";
+import { ShoppingBag, Plane, Plus, Activity, CreditCard, RotateCcw } from "lucide-react";
 
 const ICON: Record<string, React.ComponentType<{ className?: string }>> = {
-  login: LogIn, purchase: ShoppingBag, booking: Plane, topup: Plus, other: Activity,
+  payment: CreditCard, purchase: ShoppingBag, booking: Plane, topup: Plus, refund: RotateCcw,
+};
+
+const STATUS_COLOR: Record<string, string> = {
+  completed: "text-success",
+  pending: "text-warning",
+  failed: "text-destructive",
+  refunded: "text-muted-foreground",
 };
 
 const formatTime = (iso: string) => {
@@ -17,24 +25,23 @@ const formatTime = (iso: string) => {
   return d.toLocaleDateString();
 };
 
-const labelFor = (type: string, metadata: Record<string, unknown>) => {
+const labelFor = (type: string, description?: string | null) => {
+  if (description) return description;
   switch (type) {
-    case "login": return "Signed in to Nexus";
-    case "topup": {
-      const amt = typeof metadata.amount === "number" ? metadata.amount / 100 : 0;
-      return `Wallet top-up · $${amt.toFixed(2)}`;
-    }
+    case "topup": return "Wallet top-up";
+    case "payment": return "Payment";
     case "purchase": return "Marketplace purchase";
-    case "booking": return "Travel booking confirmed";
-    default: return "Activity";
+    case "booking": return "Travel booking";
+    case "refund": return "Refund";
+    default: return "Transaction";
   }
 };
 
 export const RecentActivity = ({ userId }: { userId?: string }) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["activity", userId],
+    queryKey: ["transactions", userId],
     queryFn: async () => {
-      const { data, error } = await activityService.list(userId!, 8);
+      const { data, error } = await api.transactions.list(userId!, 8);
       if (error) throw error;
       return data;
     },
@@ -53,22 +60,35 @@ export const RecentActivity = ({ userId }: { userId?: string }) => {
         </div>
       ) : !data || data.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border/60 p-6 text-center text-sm text-muted-foreground">
-          No activity yet — try topping up your wallet.
+          No transactions yet — try topping up your wallet.
         </div>
       ) : (
         <ul className="divide-y divide-border/40">
-          {data.map((a) => {
-            const Icon = ICON[a.action_type] ?? Activity;
+          {data.map((t, i) => {
+            const Icon = ICON[t.type] ?? Activity;
+            const sign = t.type === "topup" || t.type === "refund" ? "+" : "−";
+            const dollars = (t.amount / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             return (
-              <li key={a.id} className="flex items-center gap-3 py-3">
+              <motion.li
+                key={t.id}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.04 }}
+                className="flex items-center gap-3 py-3"
+              >
                 <div className="grid h-9 w-9 place-items-center rounded-xl bg-secondary/60">
                   <Icon className="h-4 w-4 text-primary" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{labelFor(a.action_type, (a.metadata ?? {}) as Record<string, unknown>)}</p>
-                  <p className="text-xs text-muted-foreground">{formatTime(a.created_at)}</p>
+                  <p className="truncate text-sm font-medium">{labelFor(t.type, t.description)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatTime(t.created_at)} · <span className={STATUS_COLOR[t.status] ?? ""}>{t.status}</span>
+                  </p>
                 </div>
-              </li>
+                <div className={`font-display text-sm font-semibold ${sign === "+" ? "text-success" : ""}`}>
+                  {sign}${dollars}
+                </div>
+              </motion.li>
             );
           })}
         </ul>
