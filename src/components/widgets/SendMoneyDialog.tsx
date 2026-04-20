@@ -23,21 +23,8 @@ export const SendMoneyDialog = ({ userId, balance }: Props) => {
       if (!cents || cents <= 0) throw new Error("Enter a valid amount");
       if (cents > balance) throw new Error("Low balance — top up to send this amount");
 
-      const { error: updErr } = await api.client
-        .from("profiles")
-        .update({ wallet_balance: balance - cents })
-        .eq("id", userId);
-      if (updErr) throw updErr;
-
-      const { error: txErr } = await api.transactions.create({
-        user_id: userId,
-        type: "payment",
-        amount: cents,
-        status: "completed",
-        description: `Payment to ${recipient.trim()}`,
-        metadata: { recipient: recipient.trim() },
-      });
-      if (txErr) throw txErr;
+      // Atomic server-side transfer (prevents double-spend & RLS bypass)
+      await api.profiles.send(recipient.trim(), cents);
     },
     onSuccess: () => {
       toast.success(`Sent $${parseFloat(amount).toFixed(2)} to ${recipient}`);
