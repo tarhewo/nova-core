@@ -1,34 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
-import { transactionsService } from "./transactions.service";
 
 export const profileService = {
   getProfile: (userId: string) =>
     supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
 
-  topUp: async (userId: string, amount: number) => {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("wallet_balance")
-      .eq("id", userId)
-      .maybeSingle();
-    const newBalance = (profile?.wallet_balance ?? 0) + amount;
-    const { error } = await supabase
-      .from("profiles")
-      .update({ wallet_balance: newBalance })
-      .eq("id", userId);
+  /** Atomic server-side top-up. Returns new balance in cents. */
+  topUp: async (_userId: string, amount: number) => {
+    const { data, error } = await supabase.rpc("wallet_topup", { p_amount: amount });
     if (error) throw error;
-    await transactionsService.create({
-      user_id: userId,
-      type: "topup",
-      amount,
-      status: "completed",
-      description: "Wallet top-up",
+    return data as number;
+  },
+
+  /** Atomic server-side send. Returns new balance in cents. */
+  send: async (recipient: string, amount: number) => {
+    const { data, error } = await supabase.rpc("wallet_send", {
+      p_recipient: recipient,
+      p_amount: amount,
     });
-    await supabase.from("user_activity").insert([{
-      user_id: userId,
-      action_type: "topup" as const,
-      metadata: { amount } as never,
-    }]);
-    return newBalance;
+    if (error) throw error;
+    return data as number;
   },
 };
