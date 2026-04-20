@@ -21,6 +21,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          tier: Database["public"]["Enums"]["account_tier"]
           updated_at: string
           wallet_balance: number
         }
@@ -30,6 +31,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          tier?: Database["public"]["Enums"]["account_tier"]
           updated_at?: string
           wallet_balance?: number
         }
@@ -39,6 +41,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          tier?: Database["public"]["Enums"]["account_tier"]
           updated_at?: string
           wallet_balance?: number
         }
@@ -180,6 +183,7 @@ export type Database = {
       }
     }
     Enums: {
+      account_tier: "free" | "premium" | "enterprise"
       activity_type: "login" | "purchase" | "booking" | "topup" | "other"
       app_role: "user" | "vendor" | "admin"
       service_category: "fintech" | "travel" | "media" | "shop"
@@ -313,6 +317,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_tier: ["free", "premium", "enterprise"],
       activity_type: ["login", "purchase", "booking", "topup", "other"],
       app_role: ["user", "vendor", "admin"],
       service_category: ["fintech", "travel", "media", "shop"],
