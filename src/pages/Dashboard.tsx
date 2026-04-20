@@ -35,7 +35,7 @@ export default function Dashboard() {
                 <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
                   Welcome back, <span className="text-gradient">{profile?.full_name ?? user?.email?.split("@")[0] ?? "there"}</span>
                 </h1>
-                {profile?.tier && profile.tier !== "free" && (
+                {profile?.tier && (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-primary-glow">
                     <Crown className="h-3 w-3" /> {profile.tier}
                   </span>
