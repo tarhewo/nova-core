@@ -8,9 +8,9 @@ import { ArrowUpRight, Loader2 } from "lucide-react";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 
-interface Props { userId: string; balance: number }
+interface Props { balance: number }
 
-export const SendMoneyDialog = ({ userId, balance }: Props) => {
+export const SendMoneyDialog = ({ balance }: Props) => {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [recipient, setRecipient] = useState("");
