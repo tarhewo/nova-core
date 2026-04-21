@@ -10,6 +10,11 @@ import { profileService } from "./profile.service";
 import { servicesService } from "./services.service";
 import { activityService } from "./activity.service";
 import { transactionsService } from "./transactions.service";
+import { travelService } from "./travel.service";
+import { coursesService } from "./courses.service";
+import { productsService } from "./products.service";
+import { notificationsService } from "./notifications.service";
+import { paymentService } from "./payment.service";
 
 export const api = {
   client: supabase,
@@ -18,6 +23,11 @@ export const api = {
   services: servicesService,
   activity: activityService,
   transactions: transactionsService,
+  travel: travelService,
+  courses: coursesService,
+  products: productsService,
+  notifications: notificationsService,
+  payment: paymentService,
 };
 
 export type Api = typeof api;
