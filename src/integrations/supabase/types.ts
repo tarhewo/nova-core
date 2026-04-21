@@ -38,6 +38,188 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          duration_minutes: number
+          enrolled_count: number
+          id: string
+          instructor: string
+          level: string
+          rating: number
+          thumbnail_url: string | null
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          enrolled_count?: number
+          id?: string
+          instructor: string
+          level?: string
+          rating?: number
+          thumbnail_url?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number
+          enrolled_count?: number
+          id?: string
+          instructor?: string
+          level?: string
+          rating?: number
+          thumbnail_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      enrollments: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          last_watched_at: string
+          progress: number
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          last_watched_at?: string
+          progress?: number
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          last_watched_at?: string
+          progress?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payment_methods: {
+        Row: {
+          brand: string
+          created_at: string
+          exp_month: number
+          exp_year: number
+          id: string
+          is_default: boolean
+          last4: string
+          nickname: string | null
+          user_id: string
+        }
+        Insert: {
+          brand: string
+          created_at?: string
+          exp_month: number
+          exp_year: number
+          id?: string
+          is_default?: boolean
+          last4: string
+          nickname?: string | null
+          user_id: string
+        }
+        Update: {
+          brand?: string
+          created_at?: string
+          exp_month?: number
+          exp_year?: number
+          id?: string
+          is_default?: boolean
+          last4?: string
+          nickname?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          image_url: string | null
+          price_cents: number
+          rating: number
+          stock: number
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          price_cents: number
+          rating?: number
+          stock?: number
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string | null
+          price_cents?: number
+          rating?: number
+          stock?: number
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -148,6 +330,51 @@ export type Database = {
           },
         ]
       }
+      travel_listings: {
+        Row: {
+          airline: string
+          cabin: string
+          created_at: string
+          departure_at: string
+          destination: string
+          destination_code: string
+          duration_minutes: number
+          id: string
+          origin: string
+          origin_code: string
+          price_cents: number
+          seats_available: number
+        }
+        Insert: {
+          airline: string
+          cabin?: string
+          created_at?: string
+          departure_at: string
+          destination: string
+          destination_code: string
+          duration_minutes: number
+          id?: string
+          origin: string
+          origin_code: string
+          price_cents: number
+          seats_available?: number
+        }
+        Update: {
+          airline?: string
+          cabin?: string
+          created_at?: string
+          departure_at?: string
+          destination?: string
+          destination_code?: string
+          duration_minutes?: number
+          id?: string
+          origin?: string
+          origin_code?: string
+          price_cents?: number
+          seats_available?: number
+        }
+        Relationships: []
+      }
       user_activity: {
         Row: {
           action_type: Database["public"]["Enums"]["activity_type"]
@@ -205,6 +432,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      notifications_mark_all_read: { Args: never; Returns: number }
       wallet_send: {
         Args: { p_amount: number; p_recipient: string }
         Returns: number
