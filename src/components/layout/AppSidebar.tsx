@@ -11,10 +11,10 @@ const main = [
   { title: "Overview", url: "/dashboard", icon: LayoutDashboard },
 ];
 const services = [
-  { title: "Wallet", url: "/dashboard", icon: Wallet },
-  { title: "Travel", url: "/dashboard", icon: Plane },
-  { title: "Studio", url: "/dashboard", icon: PlaySquare },
-  { title: "Marketplace", url: "/dashboard", icon: ShoppingBag },
+  { title: "Wallet", url: "/wallet", icon: Wallet },
+  { title: "Travel", url: "/travel", icon: Plane },
+  { title: "Studio", url: "/studio", icon: PlaySquare },
+  { title: "Marketplace", url: "/marketplace", icon: ShoppingBag },
 ];
 
 export const AppSidebar = () => {
@@ -56,8 +56,8 @@ export const AppSidebar = () => {
             <SidebarMenu>
               {services.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
+                    <NavLink to={item.url} end>
                       <item.icon />
                       <span>{item.title}</span>
                     </NavLink>

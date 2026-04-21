@@ -7,7 +7,10 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
-import ServiceHub from "./pages/ServiceHub.tsx";
+import Wallet from "./pages/Wallet.tsx";
+import Travel from "./pages/Travel.tsx";
+import Studio from "./pages/Studio.tsx";
+import Marketplace from "./pages/Marketplace.tsx";
 import { useAuthBootstrap } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute";
 
@@ -28,10 +31,12 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/fintech"     element={<ProtectedRoute><ServiceHub category="fintech" /></ProtectedRoute>} />
-      <Route path="/travel"      element={<ProtectedRoute><ServiceHub category="travel" /></ProtectedRoute>} />
-      <Route path="/media"       element={<ProtectedRoute><ServiceHub category="media" /></ProtectedRoute>} />
-      <Route path="/marketplace" element={<ProtectedRoute><ServiceHub category="shop" /></ProtectedRoute>} />
+      <Route path="/wallet"      element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+      <Route path="/fintech"     element={<ProtectedRoute><Wallet /></ProtectedRoute>} />
+      <Route path="/travel"      element={<ProtectedRoute><Travel /></ProtectedRoute>} />
+      <Route path="/studio"      element={<ProtectedRoute><Studio /></ProtectedRoute>} />
+      <Route path="/media"       element={<ProtectedRoute><Studio /></ProtectedRoute>} />
+      <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

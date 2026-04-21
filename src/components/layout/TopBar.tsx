@@ -1,8 +1,9 @@
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
+import { NotificationsPopover } from "@/components/widgets/NotificationsPopover";
 
 export const TopBar = ({ name, avatarUrl }: { name?: string; avatarUrl?: string }) => {
   const { user } = useAuth();
@@ -15,10 +16,7 @@ export const TopBar = ({ name, avatarUrl }: { name?: string; avatarUrl?: string 
         <Input placeholder="Search…" className="pl-9 bg-secondary/50" />
       </div>
       <div className="ml-auto flex items-center gap-2">
-        <button className="relative grid h-9 w-9 place-items-center rounded-xl border border-border/60 bg-secondary/50 hover:bg-secondary transition" aria-label="Notifications">
-          <Bell className="h-4 w-4" />
-          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary animate-pulse-glow" />
-        </button>
+        <NotificationsPopover />
         <Avatar className="h-9 w-9 ring-2 ring-primary/30">
           <AvatarImage src={avatarUrl} />
           <AvatarFallback className="bg-gradient-primary text-xs font-semibold text-primary-foreground">{initials}</AvatarFallback>

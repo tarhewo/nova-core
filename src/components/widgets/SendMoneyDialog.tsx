@@ -8,11 +8,18 @@ import { ArrowUpRight, Loader2 } from "lucide-react";
 import { api } from "@/services/api";
 import { toast } from "sonner";
 
-interface Props { balance: number }
+interface Props {
+  balance: number;
+  open?: boolean;
+  onOpenChange?: (v: boolean) => void;
+  hideTrigger?: boolean;
+}
 
-export const SendMoneyDialog = ({ balance }: Props) => {
+export const SendMoneyDialog = ({ balance, open: controlledOpen, onOpenChange, hideTrigger }: Props) => {
   const qc = useQueryClient();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
 
@@ -38,11 +45,13 @@ export const SendMoneyDialog = ({ balance }: Props) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="bg-secondary/40">
-          <ArrowUpRight className="mr-1 h-4 w-4" /> Send
-        </Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          <Button variant="outline" className="bg-secondary/40">
+            <ArrowUpRight className="mr-1 h-4 w-4" /> Send
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="glass-strong border-border/60">
         <DialogHeader>
           <DialogTitle className="font-display text-xl">Send money</DialogTitle>
