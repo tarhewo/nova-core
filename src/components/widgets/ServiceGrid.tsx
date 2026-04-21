@@ -12,9 +12,9 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const ROUTE: Record<string, string> = {
-  fintech: "/fintech",
+  fintech: "/wallet",
   travel: "/travel",
-  media: "/media",
+  media: "/studio",
   shop: "/marketplace",
 };
 
