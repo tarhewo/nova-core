@@ -172,32 +172,85 @@ export type Database = {
       marketplace_chats: {
         Row: {
           buyer_id: string
+          buyer_unread: number
           created_at: string
           id: string
           last_message_at: string
+          last_preview: string | null
           listing_id: string
           listing_kind: Database["public"]["Enums"]["listing_kind"]
           seller_id: string
+          seller_unread: number
         }
         Insert: {
           buyer_id: string
+          buyer_unread?: number
           created_at?: string
           id?: string
           last_message_at?: string
+          last_preview?: string | null
           listing_id: string
           listing_kind: Database["public"]["Enums"]["listing_kind"]
           seller_id: string
+          seller_unread?: number
         }
         Update: {
           buyer_id?: string
+          buyer_unread?: number
           created_at?: string
           id?: string
           last_message_at?: string
+          last_preview?: string | null
           listing_id?: string
           listing_kind?: Database["public"]["Enums"]["listing_kind"]
           seller_id?: string
+          seller_unread?: number
         }
         Relationships: []
+      }
+      messages: {
+        Row: {
+          attachment_url: string | null
+          body: string | null
+          chat_id: string
+          created_at: string
+          edited_at: string | null
+          id: string
+          kind: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          body?: string | null
+          chat_id: string
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+          kind?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          attachment_url?: string | null
+          body?: string | null
+          chat_id?: string
+          created_at?: string
+          edited_at?: string | null
+          id?: string
+          kind?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_chats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -766,6 +819,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      marketplace_chat_open: {
+        Args: {
+          p_listing_id: string
+          p_listing_kind: Database["public"]["Enums"]["listing_kind"]
+          p_seller_id: string
+        }
+        Returns: string
+      }
       marketplace_purchase: {
         Args: {
           p_amount_cents: number
@@ -777,6 +838,7 @@ export type Database = {
         }
         Returns: string
       }
+      messages_mark_read: { Args: { p_chat_id: string }; Returns: number }
       notifications_mark_all_read: { Args: never; Returns: number }
       slugify: { Args: { p: string }; Returns: string }
       wallet_send: {

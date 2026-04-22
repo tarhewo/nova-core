@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { Private } from "@/components/shared/Private";
@@ -12,13 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
-import { ShoppingBag, Briefcase, Store, MapPin, Star, Search, Sparkles, Plus } from "lucide-react";
+import { ShoppingBag, Briefcase, Store, MapPin, Star, Search, Sparkles, Plus, MessageCircle } from "lucide-react";
 import { api } from "@/services/api";
 import { serviceListingsService } from "@/services/serviceListings.service";
 import { localListingsService } from "@/services/localListings.service";
 import { shopsService } from "@/services/shops.service";
 import { ordersService } from "@/services/orders.service";
 import { pricingEngine } from "@/services/pricing.service";
+import { messagesService } from "@/services/messages.service";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -27,6 +28,7 @@ type Tab = "products" | "services" | "shops" | "local";
 export default function Marketplace() {
   const { user } = useAuth();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const initial = (params.get("tab") as Tab) || (params.get("featured") === "1" ? "products" : "products");
   const [tab, setTab] = useState<Tab>(initial);
@@ -54,6 +56,14 @@ export default function Marketplace() {
       qc.invalidateQueries({ queryKey: ["transactions"] });
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  // ---- Chat — open or fetch a buyer↔seller conversation ----------------
+  const chat = useMutation({
+    mutationFn: (input: { kind: "service" | "local" | "shop"; listing_id: string; seller_id: string }) =>
+      messagesService.openChat({ listing_kind: input.kind, listing_id: input.listing_id, seller_id: input.seller_id }),
+    onSuccess: (chatId) => navigate(`/messages?chat=${chatId}`),
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -100,6 +110,8 @@ export default function Marketplace() {
             data={servicesQ.data ?? []}
             loading={servicesQ.isLoading}
             onBook={(s) => buy.mutate({ kind: "service", listing_id: s.id, amount_cents: s.base_price_cents, title: s.title })}
+            onChat={(s) => chat.mutate({ kind: "service", listing_id: s.id, seller_id: s.owner_id })}
+            currentUserId={user?.id ?? null}
             disabled={buy.isPending || !user}
           />
         </TabsContent>
@@ -107,7 +119,13 @@ export default function Marketplace() {
         {/* SHOPS — Etsy storefronts */}
         <TabsContent value="shops" className="mt-5 space-y-4">
           <CreateShopDialog onCreated={() => qc.invalidateQueries({ queryKey: ["shops"] })} />
-          <ShopsGrid search={search} data={shopsQ.data ?? []} loading={shopsQ.isLoading} />
+          <ShopsGrid
+            search={search}
+            data={shopsQ.data ?? []}
+            loading={shopsQ.isLoading}
+            onChat={(s) => chat.mutate({ kind: "shop", listing_id: s.id, seller_id: s.owner_id })}
+            currentUserId={user?.id ?? null}
+          />
         </TabsContent>
 
         {/* LOCAL — Jiji-style classifieds */}
@@ -118,6 +136,8 @@ export default function Marketplace() {
             data={localQ.data ?? []}
             loading={localQ.isLoading}
             onBuy={(l) => buy.mutate({ kind: "local", listing_id: l.id, amount_cents: l.price_cents, title: l.title })}
+            onChat={(l) => chat.mutate({ kind: "local", listing_id: l.id, seller_id: l.owner_id })}
+            currentUserId={user?.id ?? null}
             disabled={buy.isPending || !user}
           />
         </TabsContent>
@@ -173,9 +193,13 @@ function ProductsGrid({ data, loading, onBuy, disabled, search, featured }: {
 }
 
 // ---------- SERVICES -----------------------------------------------------
-function ServicesGrid({ data, loading, onBook, disabled, search }: {
-  data: Array<{ id: string; title: string; description: string | null; category: string; base_price_cents: number; rating: number; delivery_days: number }>;
-  loading: boolean; onBook: (s: { id: string; title: string; base_price_cents: number }) => void; disabled: boolean; search: string;
+function ServicesGrid({ data, loading, onBook, onChat, currentUserId, disabled, search }: {
+  data: Array<{ id: string; owner_id: string; title: string; description: string | null; category: string; base_price_cents: number; rating: number; delivery_days: number }>;
+  loading: boolean;
+  onBook: (s: { id: string; title: string; base_price_cents: number }) => void;
+  onChat: (s: { id: string; owner_id: string }) => void;
+  currentUserId: string | null;
+  disabled: boolean; search: string;
 }) {
   const visible = data.filter((s) => !search || s.title.toLowerCase().includes(search.toLowerCase()));
   if (loading) return <Skeleton />;
@@ -196,7 +220,14 @@ function ServicesGrid({ data, loading, onBook, disabled, search }: {
           </div>
           <div className="mt-4 flex items-center justify-between">
             <span className="font-display text-xl font-bold">From ${(s.base_price_cents / 100).toFixed(0)}</span>
-            <Button size="sm" disabled={disabled} onClick={() => onBook({ id: s.id, title: s.title, base_price_cents: s.base_price_cents })} className="bg-gradient-primary text-primary-foreground">Book</Button>
+            <div className="flex items-center gap-1.5">
+              {currentUserId && currentUserId !== s.owner_id && (
+                <Button size="sm" variant="outline" onClick={() => onChat({ id: s.id, owner_id: s.owner_id })} className="gap-1">
+                  <MessageCircle className="h-3.5 w-3.5" /> Chat
+                </Button>
+              )}
+              <Button size="sm" disabled={disabled} onClick={() => onBook({ id: s.id, title: s.title, base_price_cents: s.base_price_cents })} className="bg-gradient-primary text-primary-foreground">Book</Button>
+            </div>
           </div>
         </GlassCard>
       ))}
@@ -205,7 +236,12 @@ function ServicesGrid({ data, loading, onBook, disabled, search }: {
 }
 
 // ---------- SHOPS --------------------------------------------------------
-function ShopsGrid({ data, loading, search }: { data: Array<{ id: string; slug: string; name: string; tagline: string | null; rating: number; rating_count: number; verified: boolean }>; loading: boolean; search: string }) {
+function ShopsGrid({ data, loading, search, onChat, currentUserId }: {
+  data: Array<{ id: string; owner_id: string; slug: string; name: string; tagline: string | null; rating: number; rating_count: number; verified: boolean }>;
+  loading: boolean; search: string;
+  onChat: (s: { id: string; owner_id: string }) => void;
+  currentUserId: string | null;
+}) {
   const visible = data.filter((s) => !search || s.name.toLowerCase().includes(search.toLowerCase()));
   if (loading) return <Skeleton />;
   if (!visible.length) return <Empty label="No shops yet — open the first storefront." />;
@@ -221,7 +257,14 @@ function ShopsGrid({ data, loading, search }: { data: Array<{ id: string; slug: 
               <p className="truncate text-xs text-muted-foreground">{s.tagline ?? "Storefront"}</p>
             </div>
           </div>
-          <div className="mt-2 inline-flex items-center gap-1 text-xs text-muted-foreground"><Star className="h-3 w-3 text-warning" /> {s.rating} ({s.rating_count})</div>
+          <div className="mt-2 flex items-center justify-between">
+            <div className="inline-flex items-center gap-1 text-xs text-muted-foreground"><Star className="h-3 w-3 text-warning" /> {s.rating} ({s.rating_count})</div>
+            {currentUserId && currentUserId !== s.owner_id && (
+              <Button size="sm" variant="outline" onClick={() => onChat({ id: s.id, owner_id: s.owner_id })} className="gap-1">
+                <MessageCircle className="h-3.5 w-3.5" /> Chat
+              </Button>
+            )}
+          </div>
         </GlassCard>
       ))}
     </div>
@@ -229,9 +272,13 @@ function ShopsGrid({ data, loading, search }: { data: Array<{ id: string; slug: 
 }
 
 // ---------- LOCAL --------------------------------------------------------
-function LocalGrid({ data, loading, onBuy, disabled, search }: {
-  data: Array<{ id: string; title: string; description: string | null; category: string; price_cents: number; condition: string; city: string | null; contact_method: string }>;
-  loading: boolean; onBuy: (l: { id: string; title: string; price_cents: number }) => void; disabled: boolean; search: string;
+function LocalGrid({ data, loading, onBuy, onChat, currentUserId, disabled, search }: {
+  data: Array<{ id: string; owner_id: string; title: string; description: string | null; category: string; price_cents: number; condition: string; city: string | null; contact_method: string }>;
+  loading: boolean;
+  onBuy: (l: { id: string; title: string; price_cents: number }) => void;
+  onChat: (l: { id: string; owner_id: string }) => void;
+  currentUserId: string | null;
+  disabled: boolean; search: string;
 }) {
   const visible = data.filter((l) => !search || l.title.toLowerCase().includes(search.toLowerCase()) || (l.city ?? "").toLowerCase().includes(search.toLowerCase()));
   if (loading) return <Skeleton />;
@@ -252,7 +299,14 @@ function LocalGrid({ data, loading, onBuy, disabled, search }: {
           </div>
           <div className="mt-4 flex items-center justify-between">
             <span className="font-display text-xl font-bold">${(l.price_cents / 100).toFixed(0)}</span>
-            <Button size="sm" disabled={disabled} onClick={() => onBuy({ id: l.id, title: l.title, price_cents: l.price_cents })} className="bg-gradient-primary text-primary-foreground">Buy</Button>
+            <div className="flex items-center gap-1.5">
+              {currentUserId && currentUserId !== l.owner_id && (
+                <Button size="sm" variant="outline" onClick={() => onChat({ id: l.id, owner_id: l.owner_id })} className="gap-1">
+                  <MessageCircle className="h-3.5 w-3.5" /> Chat
+                </Button>
+              )}
+              <Button size="sm" disabled={disabled} onClick={() => onBuy({ id: l.id, title: l.title, price_cents: l.price_cents })} className="bg-gradient-primary text-primary-foreground">Buy</Button>
+            </div>
           </div>
         </GlassCard>
       ))}

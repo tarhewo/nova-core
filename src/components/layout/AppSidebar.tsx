@@ -1,4 +1,4 @@
-import { LayoutDashboard, Wallet, Plane, PlaySquare, ShoppingBag, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Wallet, Plane, PlaySquare, ShoppingBag, Settings, LogOut, MessageCircle } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -15,6 +15,7 @@ const services = [
   { title: "Travel", url: "/travel", icon: Plane },
   { title: "Studio", url: "/studio", icon: PlaySquare },
   { title: "Marketplace", url: "/marketplace", icon: ShoppingBag },
+  { title: "Messages", url: "/messages", icon: MessageCircle },
 ];
 
 export const AppSidebar = () => {

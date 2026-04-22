@@ -22,6 +22,7 @@ import { ordersService } from "./orders.service";
 import { reviewsService } from "./reviews.service";
 import { searchService } from "./search.service";
 import { pricingEngine } from "./pricing.service";
+import { messagesService } from "./messages.service";
 
 export const api = {
   client: supabase,
@@ -42,6 +43,7 @@ export const api = {
   reviews: reviewsService,
   search: searchService,
   pricing: pricingEngine,
+  messages: messagesService,
 };
 
 export type Api = typeof api;
