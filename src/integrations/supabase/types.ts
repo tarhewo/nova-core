@@ -115,6 +115,90 @@ export type Database = {
           },
         ]
       }
+      local_listings: {
+        Row: {
+          active: boolean
+          category: string
+          city: string | null
+          condition: Database["public"]["Enums"]["local_condition"]
+          contact_method: string
+          country: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          owner_id: string
+          price_cents: number
+          region: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          city?: string | null
+          condition?: Database["public"]["Enums"]["local_condition"]
+          contact_method?: string
+          country?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id: string
+          price_cents: number
+          region?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          city?: string | null
+          condition?: Database["public"]["Enums"]["local_condition"]
+          contact_method?: string
+          country?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id?: string
+          price_cents?: number
+          region?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      marketplace_chats: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          id: string
+          last_message_at: string
+          listing_id: string
+          listing_kind: Database["public"]["Enums"]["listing_kind"]
+          seller_id: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          listing_id: string
+          listing_kind: Database["public"]["Enums"]["listing_kind"]
+          seller_id: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          listing_id?: string
+          listing_kind?: Database["public"]["Enums"]["listing_kind"]
+          seller_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -142,6 +226,48 @@ export type Database = {
           title?: string
           type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          amount_cents: number
+          buyer_id: string
+          created_at: string
+          id: string
+          listing_id: string
+          listing_kind: Database["public"]["Enums"]["listing_kind"]
+          metadata: Json
+          seller_id: string | null
+          status: Database["public"]["Enums"]["order_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          buyer_id: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          listing_kind: Database["public"]["Enums"]["listing_kind"]
+          metadata?: Json
+          seller_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          buyer_id?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          listing_kind?: Database["public"]["Enums"]["listing_kind"]
+          metadata?: Json
+          seller_id?: string | null
+          status?: Database["public"]["Enums"]["order_status"]
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -178,6 +304,33 @@ export type Database = {
           last4?: string
           nickname?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      pricing_rules: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          params: Json
+          rule_type: string
+          scope: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          params?: Json
+          rule_type: string
+          scope?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          params?: Json
+          rule_type?: string
+          scope?: string
         }
         Relationships: []
       }
@@ -253,6 +406,139 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          listing_id: string
+          listing_kind: Database["public"]["Enums"]["listing_kind"]
+          rating: number
+          reviewer_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id: string
+          listing_kind: Database["public"]["Enums"]["listing_kind"]
+          rating: number
+          reviewer_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string
+          listing_kind?: Database["public"]["Enums"]["listing_kind"]
+          rating?: number
+          reviewer_id?: string
+        }
+        Relationships: []
+      }
+      service_listings: {
+        Row: {
+          active: boolean
+          base_price_cents: number
+          category: string
+          cover_url: string | null
+          created_at: string
+          delivery_days: number
+          description: string | null
+          id: string
+          owner_id: string
+          rating: number
+          rating_count: number
+          shop_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          base_price_cents: number
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          id?: string
+          owner_id: string
+          rating?: number
+          rating_count?: number
+          shop_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          base_price_cents?: number
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          id?: string
+          owner_id?: string
+          rating?: number
+          rating_count?: number
+          shop_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_listings_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_packages: {
+        Row: {
+          created_at: string
+          delivery_days: number
+          description: string | null
+          id: string
+          price_cents: number
+          revisions: number
+          service_id: string
+          tier: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          id?: string
+          price_cents: number
+          revisions?: number
+          service_id: string
+          tier: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          id?: string
+          price_cents?: number
+          revisions?: number
+          service_id?: string
+          tier?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_packages_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           category: Database["public"]["Enums"]["service_category"]
@@ -283,6 +569,54 @@ export type Database = {
           name?: string
           sort_order?: number
           status?: Database["public"]["Enums"]["service_status"]
+        }
+        Relationships: []
+      }
+      shops: {
+        Row: {
+          avatar_url: string | null
+          banner_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          owner_id: string
+          rating: number
+          rating_count: number
+          slug: string
+          tagline: string | null
+          updated_at: string
+          verified: boolean
+        }
+        Insert: {
+          avatar_url?: string | null
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          rating?: number
+          rating_count?: number
+          slug: string
+          tagline?: string | null
+          updated_at?: string
+          verified?: boolean
+        }
+        Update: {
+          avatar_url?: string | null
+          banner_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          rating?: number
+          rating_count?: number
+          slug?: string
+          tagline?: string | null
+          updated_at?: string
+          verified?: boolean
         }
         Relationships: []
       }
@@ -432,7 +766,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      marketplace_purchase: {
+        Args: {
+          p_amount_cents: number
+          p_listing_id: string
+          p_listing_kind: Database["public"]["Enums"]["listing_kind"]
+          p_meta?: Json
+          p_seller_id?: string
+          p_title: string
+        }
+        Returns: string
+      }
       notifications_mark_all_read: { Args: never; Returns: number }
+      slugify: { Args: { p: string }; Returns: string }
       wallet_send: {
         Args: { p_amount: number; p_recipient: string }
         Returns: number
@@ -443,6 +789,9 @@ export type Database = {
       account_tier: "standard" | "premium" | "enterprise"
       activity_type: "login" | "purchase" | "booking" | "topup" | "other"
       app_role: "user" | "vendor" | "admin"
+      listing_kind: "product" | "service" | "local" | "shop"
+      local_condition: "new" | "like_new" | "used" | "for_parts"
+      order_status: "pending" | "paid" | "fulfilled" | "cancelled" | "refunded"
       service_category: "fintech" | "travel" | "media" | "shop"
       service_status: "active" | "coming_soon"
       transaction_status: "pending" | "completed" | "failed" | "refunded"
@@ -577,6 +926,9 @@ export const Constants = {
       account_tier: ["standard", "premium", "enterprise"],
       activity_type: ["login", "purchase", "booking", "topup", "other"],
       app_role: ["user", "vendor", "admin"],
+      listing_kind: ["product", "service", "local", "shop"],
+      local_condition: ["new", "like_new", "used", "for_parts"],
+      order_status: ["pending", "paid", "fulfilled", "cancelled", "refunded"],
       service_category: ["fintech", "travel", "media", "shop"],
       service_status: ["active", "coming_soon"],
       transaction_status: ["pending", "completed", "failed", "refunded"],
