@@ -11,13 +11,29 @@ import Wallet from "./pages/Wallet.tsx";
 import Travel from "./pages/Travel.tsx";
 import Studio from "./pages/Studio.tsx";
 import Marketplace from "./pages/Marketplace.tsx";
+import Settings from "./pages/Settings.tsx";
 import { useAuthBootstrap } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute";
+import { useEffect } from "react";
+import { applyPrivacyAttribute, usePrivacy } from "./store/privacy";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   useAuthBootstrap();
+  const { mode, stealth } = usePrivacy();
+  useEffect(() => { applyPrivacyAttribute(mode, stealth); }, [mode, stealth]);
+  // ⌘⇧P toggles stealth globally
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        usePrivacy.getState().toggleStealth();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   return (
     <Routes>
       <Route path="/" element={<Index />} />
@@ -37,6 +53,7 @@ const AppRoutes = () => {
       <Route path="/studio"      element={<ProtectedRoute><Studio /></ProtectedRoute>} />
       <Route path="/media"       element={<ProtectedRoute><Studio /></ProtectedRoute>} />
       <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+      <Route path="/settings"    element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
     </Routes>

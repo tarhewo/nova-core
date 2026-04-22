@@ -1,9 +1,9 @@
-import { Search } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { NotificationsPopover } from "@/components/widgets/NotificationsPopover";
+import { CommandBar } from "@/components/widgets/CommandBar";
+import { PrivacyToggle } from "@/components/widgets/PrivacyToggle";
 
 export const TopBar = ({ name, avatarUrl }: { name?: string; avatarUrl?: string }) => {
   const { user } = useAuth();
@@ -11,11 +11,11 @@ export const TopBar = ({ name, avatarUrl }: { name?: string; avatarUrl?: string 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border/40 bg-background/60 px-4 backdrop-blur-xl">
       <SidebarTrigger />
-      <div className="relative ml-2 hidden flex-1 max-w-md md:block">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input placeholder="Search…" className="pl-9 bg-secondary/50" />
+      <div className="ml-2 flex flex-1 items-center">
+        <CommandBar />
       </div>
       <div className="ml-auto flex items-center gap-2">
+        <PrivacyToggle />
         <NotificationsPopover />
         <Avatar className="h-9 w-9 ring-2 ring-primary/30">
           <AvatarImage src={avatarUrl} />

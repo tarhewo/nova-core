@@ -113,3 +113,46 @@
     box-shadow: var(--shadow-glow);
   }
 }
+
+/* ============================================================
+   Adaptive Obsidian Privacy
+   - Drives obfuscation via root-scoped CSS variables.
+   - Components opt-in with `data-private="auto|blur|mask"`.
+   - The `[data-revealed="true"]` attribute (set by <Private />)
+     temporarily disables the effect on click/hover for 3s.
+============================================================ */
+@layer utilities {
+  :root[data-privacy-mode="off"] [data-private] { filter: none; }
+
+  [data-private="blur"]:not([data-revealed="true"]),
+  [data-private="auto"]:not([data-revealed="true"]) {
+    filter: blur(8px);
+    transition: filter 220ms var(--transition-smooth);
+    cursor: pointer;
+    user-select: none;
+  }
+  :root[data-privacy-mode="mask"] [data-private="auto"]:not([data-revealed="true"]) {
+    filter: none;
+  }
+  /* Mask mode replaces value via the ::after token written by <Private />. */
+  [data-private="mask"]:not([data-revealed="true"]) > .private-value,
+  :root[data-privacy-mode="mask"] [data-private="auto"]:not([data-revealed="true"]) > .private-value {
+    visibility: hidden;
+    position: relative;
+  }
+  [data-private="mask"]:not([data-revealed="true"])::after,
+  :root[data-privacy-mode="mask"] [data-private="auto"]:not([data-revealed="true"])::after {
+    content: attr(data-mask);
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.18em;
+    font-feature-settings: "tnum";
+    margin-left: -100%;
+    padding-left: 0;
+  }
+  /* Stealth Mode = blur everything tagged regardless of declared mode. */
+  :root[data-privacy-mode="stealth"] [data-private]:not([data-revealed="true"]) {
+    filter: blur(10px) saturate(0.6);
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}

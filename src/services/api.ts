@@ -15,6 +15,13 @@ import { coursesService } from "./courses.service";
 import { productsService } from "./products.service";
 import { notificationsService } from "./notifications.service";
 import { paymentService } from "./payment.service";
+import { shopsService } from "./shops.service";
+import { serviceListingsService } from "./serviceListings.service";
+import { localListingsService } from "./localListings.service";
+import { ordersService } from "./orders.service";
+import { reviewsService } from "./reviews.service";
+import { searchService } from "./search.service";
+import { pricingEngine } from "./pricing.service";
 
 export const api = {
   client: supabase,
@@ -28,6 +35,13 @@ export const api = {
   products: productsService,
   notifications: notificationsService,
   payment: paymentService,
+  shops: shopsService,
+  serviceListings: serviceListingsService,
+  localListings: localListingsService,
+  orders: ordersService,
+  reviews: reviewsService,
+  search: searchService,
+  pricing: pricingEngine,
 };
 
 export type Api = typeof api;

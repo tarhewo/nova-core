@@ -71,9 +71,11 @@ export const AppSidebar = () => {
       <SidebarFooter className="p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Settings />
-              <span>Settings</span>
+            <SidebarMenuButton asChild isActive={isActive("/settings")}>
+              <NavLink to="/settings" end>
+                <Settings />
+                <span>Settings</span>
+              </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
