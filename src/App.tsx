@@ -12,6 +12,7 @@ import Travel from "./pages/Travel.tsx";
 import Studio from "./pages/Studio.tsx";
 import Marketplace from "./pages/Marketplace.tsx";
 import Settings from "./pages/Settings.tsx";
+import Messages from "./pages/Messages.tsx";
 import { useAuthBootstrap } from "./hooks/useAuth";
 import { ProtectedRoute } from "./components/shared/ProtectedRoute";
 import { useEffect } from "react";
@@ -53,6 +54,7 @@ const AppRoutes = () => {
       <Route path="/studio"      element={<ProtectedRoute><Studio /></ProtectedRoute>} />
       <Route path="/media"       element={<ProtectedRoute><Studio /></ProtectedRoute>} />
       <Route path="/marketplace" element={<ProtectedRoute><Marketplace /></ProtectedRoute>} />
+      <Route path="/messages"    element={<ProtectedRoute><Messages /></ProtectedRoute>} />
       <Route path="/settings"    element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
       <Route path="*" element={<NotFound />} />
