@@ -6,6 +6,7 @@ import { api } from "@/services/api";
 import { toast } from "sonner";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
 import { SendMoneyDialog } from "./SendMoneyDialog";
+import { Private } from "@/components/shared/Private";
 
 export const WalletWidget = ({ userId, balance, loading }: { userId?: string; balance?: number; loading?: boolean }) => {
   const qc = useQueryClient();
@@ -36,7 +37,9 @@ export const WalletWidget = ({ userId, balance, loading }: { userId?: string; ba
           </span>
         </div>
         <div className="mt-3 flex items-baseline gap-1.5">
-          <span className="font-display text-4xl font-bold tracking-tight">${dollars}</span>
+          <Private variant="blur" className="font-display text-4xl font-bold tracking-tight">
+            ${dollars}
+          </Private>
           <span className="text-sm text-muted-foreground">USD</span>
         </div>
         <div className="mt-5 flex gap-2">
