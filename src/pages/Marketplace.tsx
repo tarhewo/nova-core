@@ -110,6 +110,8 @@ export default function Marketplace() {
             data={servicesQ.data ?? []}
             loading={servicesQ.isLoading}
             onBook={(s) => buy.mutate({ kind: "service", listing_id: s.id, amount_cents: s.base_price_cents, title: s.title })}
+            onChat={(s) => chat.mutate({ kind: "service", listing_id: s.id, seller_id: s.owner_id })}
+            currentUserId={user?.id ?? null}
             disabled={buy.isPending || !user}
           />
         </TabsContent>
@@ -117,7 +119,13 @@ export default function Marketplace() {
         {/* SHOPS — Etsy storefronts */}
         <TabsContent value="shops" className="mt-5 space-y-4">
           <CreateShopDialog onCreated={() => qc.invalidateQueries({ queryKey: ["shops"] })} />
-          <ShopsGrid search={search} data={shopsQ.data ?? []} loading={shopsQ.isLoading} />
+          <ShopsGrid
+            search={search}
+            data={shopsQ.data ?? []}
+            loading={shopsQ.isLoading}
+            onChat={(s) => chat.mutate({ kind: "shop", listing_id: s.id, seller_id: s.owner_id })}
+            currentUserId={user?.id ?? null}
+          />
         </TabsContent>
 
         {/* LOCAL — Jiji-style classifieds */}
@@ -128,6 +136,8 @@ export default function Marketplace() {
             data={localQ.data ?? []}
             loading={localQ.isLoading}
             onBuy={(l) => buy.mutate({ kind: "local", listing_id: l.id, amount_cents: l.price_cents, title: l.title })}
+            onChat={(l) => chat.mutate({ kind: "local", listing_id: l.id, seller_id: l.owner_id })}
+            currentUserId={user?.id ?? null}
             disabled={buy.isPending || !user}
           />
         </TabsContent>
