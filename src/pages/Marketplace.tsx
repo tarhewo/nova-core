@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { AppShell } from "@/components/layout/AppShell";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { Private } from "@/components/shared/Private";
@@ -12,13 +12,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
 } from "@/components/ui/dialog";
-import { ShoppingBag, Briefcase, Store, MapPin, Star, Search, Sparkles, Plus } from "lucide-react";
+import { ShoppingBag, Briefcase, Store, MapPin, Star, Search, Sparkles, Plus, MessageCircle } from "lucide-react";
 import { api } from "@/services/api";
 import { serviceListingsService } from "@/services/serviceListings.service";
 import { localListingsService } from "@/services/localListings.service";
 import { shopsService } from "@/services/shops.service";
 import { ordersService } from "@/services/orders.service";
 import { pricingEngine } from "@/services/pricing.service";
+import { messagesService } from "@/services/messages.service";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -27,6 +28,7 @@ type Tab = "products" | "services" | "shops" | "local";
 export default function Marketplace() {
   const { user } = useAuth();
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const initial = (params.get("tab") as Tab) || (params.get("featured") === "1" ? "products" : "products");
   const [tab, setTab] = useState<Tab>(initial);
@@ -54,6 +56,14 @@ export default function Marketplace() {
       qc.invalidateQueries({ queryKey: ["transactions"] });
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  // ---- Chat — open or fetch a buyer↔seller conversation ----------------
+  const chat = useMutation({
+    mutationFn: (input: { kind: "service" | "local" | "shop"; listing_id: string; seller_id: string }) =>
+      messagesService.openChat({ listing_kind: input.kind, listing_id: input.listing_id, seller_id: input.seller_id }),
+    onSuccess: (chatId) => navigate(`/messages?chat=${chatId}`),
     onError: (e: Error) => toast.error(e.message),
   });
 
